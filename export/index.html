@@ -4,757 +4,527 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atlas - Humanoid Robot</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            line-height: 1.6;
-            color: #1f2937;
-            background: white;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-
-        /* Navbar Styles */
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 50;
-            padding: 1rem 0;
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .navbar .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .navbar img {
-            height: 2rem;
-        }
-
-        .nav-links {
-            display: none;
-            gap: 2rem;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: #1f2937;
-            font-weight: 500;
-            transition: color 0.3s ease;
-            position: relative;
-        }
-
-        .nav-links a:hover {
-            color: #FC4D0A;
-        }
-
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: #FC4D0A;
-            transition: width 0.3s ease;
-        }
-
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-
-        @media (min-width: 768px) {
-            .nav-links {
-                display: flex;
-            }
-        }
-
-        /* Hero Section */
-        .hero {
-            background-image: url('/Header-background.webp');
-            background-size: cover;
-            background-position: center 30%;
-            padding: 120px 20px 60px;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: -10%;
-            right: -5%;
-            width: 50%;
-            height: 70%;
-            background: linear-gradient(135deg, rgba(252, 77, 10, 0.2) 0%, rgba(252, 77, 10, 0.05) 100%);
-            border-radius: 50%;
-            filter: blur(60px);
-        }
-
-        .hero-content {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 3rem;
-            align-items: center;
-        }
-
-        @media (min-width: 1024px) {
-            .hero-content {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        .pulse-chip {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.5rem 1rem;
-            background: rgba(252, 77, 10, 0.1);
-            border: 1px solid rgba(252, 77, 10, 0.2);
-            border-radius: 50px;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #FC4D0A;
-            margin-bottom: 1.5rem;
-        }
-
-        .pulse-chip-number {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 1.25rem;
-            height: 1.25rem;
-            background: #FC4D0A;
-            color: white;
-            border-radius: 50%;
-            font-size: 0.75rem;
-            margin-right: 0.5rem;
-        }
-
-        .hero h1 {
-            font-size: clamp(2rem, 5vw, 3.5rem);
-            font-weight: 800;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
-            color: #111827;
-        }
-
-        .hero p {
-            font-size: 1.125rem;
-            color: #4b5563;
-            margin-bottom: 2rem;
-            line-height: 1.7;
-        }
-
-        .button-primary {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background: #FC4D0A;
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-        }
-
-        .button-primary:hover {
-            background: #e04408;
-            transform: scale(1.02);
-        }
-
-        .hero-image {
-            position: relative;
-            border-radius: 1.5rem;
-            overflow: hidden;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-        }
-
-        .hero-image img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        /* Sections */
-        .section {
-            padding: 5rem 0;
-        }
-
-        .section-title {
-            font-size: clamp(2rem, 4vw, 3rem);
-            font-weight: 800;
-            text-align: center;
-            margin-bottom: 1rem;
-            color: #111827;
-        }
-
-        .section-subtitle {
-            font-size: 1.125rem;
-            color: #6b7280;
-            text-align: center;
-            max-width: 600px;
-            margin: 0 auto 3rem;
-            line-height: 1.7;
-        }
-
-        /* Humanoid Section */
-        .humanoid-section {
-            background: #f9fafb;
-            padding: 5rem 0;
-            position: relative;
-        }
-
-        .card-stack {
-            position: relative;
-            height: 500px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .card {
-            position: absolute;
-            width: 100%;
-            height: 400px;
-            background-size: cover;
-            background-position: center;
-            border-radius: 1.5rem;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-            display: flex;
-            align-items: end;
-            padding: 2rem;
-            color: white;
-            transition: all 0.5s ease;
-        }
-
-        .card-1 {
-            background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.7)), url('/background-section1.png');
-            transform: translateY(80px) scale(0.9);
-            z-index: 1;
-        }
-
-        .card-2 {
-            background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.7)), url('/background-section2.png');
-            transform: translateY(40px) scale(0.95);
-            z-index: 2;
-        }
-
-        .card-3 {
-            background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.7)), url('/background-section3.png');
-            transform: translateY(0px) scale(1);
-            z-index: 3;
-        }
-
-        .card h3 {
-            font-size: 2rem;
-            font-weight: 700;
-            line-height: 1.2;
-        }
-
-        .card-badge {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            padding: 0.5rem 1rem;
-            border-radius: 50px;
-            color: white;
-            font-size: 0.875rem;
-        }
-
-        /* Features Section */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .feature-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 1rem;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        }
-
-        .feature-icon {
-            width: 3rem;
-            height: 3rem;
-            background: rgba(252, 77, 10, 0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-            color: #FC4D0A;
-        }
-
-        .feature-card h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: #111827;
-        }
-
-        .feature-card p {
-            color: #6b7280;
-            line-height: 1.6;
-        }
-
-        /* Image Showcase */
-        .showcase-image {
-            max-width: 800px;
-            margin: 0 auto;
-            border-radius: 1.5rem;
-            overflow: hidden;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-        }
-
-        .showcase-image img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .showcase-content {
-            background: white;
-            padding: 2rem;
-        }
-
-        .showcase-content h3 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: #111827;
-        }
-
-        /* Made by Humans Section */
-        .made-by-humans {
-            padding: 3rem 0;
-        }
-
-        .humans-card {
-            background-image: url('/background-section3.png');
-            background-size: cover;
-            background-position: bottom center;
-            min-height: 350px;
-            border-radius: 2rem;
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .humans-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.6));
-            z-index: 1;
-        }
-
-        .humans-card > * {
-            position: relative;
-            z-index: 2;
-        }
-
-        .humans-card .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .humans-card .logo img {
-            height: 1.5rem;
-            filter: invert(1);
-        }
-
-        .humans-title {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(3rem, 6vw, 4rem);
-            font-style: italic;
-            font-weight: 300;
-            text-align: center;
-            margin-top: 2rem;
-        }
-
-        .humans-title .highlight {
-            color: #FC4D0A;
-        }
-
-        /* Footer */
-        .footer {
-            background: white;
-            padding: 2rem 0;
-            text-align: center;
-            border-top: 1px solid #e5e7eb;
-        }
-
-        .footer p {
-            color: #6b7280;
-            font-size: 0.875rem;
-        }
-
-        .footer a {
-            color: #FC4D0A;
-            text-decoration: none;
-        }
-
-        .footer a:hover {
-            text-decoration: underline;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero {
-                padding: 100px 12px 40px;
-            }
-            
-            .section {
-                padding: 3rem 0;
-            }
-            
-            .card-stack {
-                height: 400px;
-            }
-            
-            .card {
-                height: 300px;
-                padding: 1.5rem;
-            }
-            
-            .card h3 {
-                font-size: 1.5rem;
-            }
-            
-            .features-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .humans-title {
-                margin-top: 1rem;
-            }
-        }
-
-        /* Animations */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .animate-fade-in {
-            animation: fadeIn 0.8s ease forwards;
-        }
-
-        /* Utility Classes */
-        .text-center { text-align: center; }
-        .mb-4 { margin-bottom: 1rem; }
-        .mb-8 { margin-bottom: 2rem; }
-        .mt-8 { margin-top: 2rem; }
-        .bg-gray-50 { background-color: #f9fafb; }
-        .bg-white { background-color: white; }
-
-        /* SVG Icons */
-        .icon {
-            width: 24px;
-            height: 24px;
-            stroke: currentColor;
-            fill: none;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-    </style>
+    <title>Atlas Robot - Static Export</title>
+    <meta name="description" content="Atlas: Where Code Meets Motion - The humanoid companion that learns and adapts alongside you.">
+    <meta name="author" content="Rezaul Karim Arif">
+    <meta property="og:image" content="/og-image-update.png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="container">
-            <a href="#" class="logo">
-                <img src="/logo.svg" alt="Pulse Robot Logo">
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="header__container">
+            <a href="#" class="header__logo" aria-label="Pulse Robot">
+                <img src="/logo.svg" alt="Pulse Robot Logo" class="header__logo-img">
             </a>
-            <div class="nav-links">
-                <a href="#hero">Home</a>
-                <a href="#features">About</a>
-                <a href="#contact">Contact</a>
-            </div>
+            
+            <nav class="header__nav header__nav--desktop">
+                <a href="#" class="header__nav-link">Home</a>
+                <a href="#features" class="header__nav-link">About</a>
+                <a href="#details" class="header__nav-link">Contact</a>
+            </nav>
+            
+            <button class="header__menu-btn" id="menuBtn" aria-label="Open menu">
+                <span class="header__menu-icon"></span>
+                <span class="header__menu-icon"></span>
+                <span class="header__menu-icon"></span>
+            </button>
         </div>
-    </nav>
+        
+        <!-- Mobile Navigation -->
+        <div class="header__mobile-nav" id="mobileNav">
+            <nav class="header__mobile-nav-content">
+                <a href="#" class="header__mobile-nav-link">Home</a>
+                <a href="#features" class="header__mobile-nav-link">About</a>
+                <a href="#details" class="header__mobile-nav-link">Contact</a>
+            </nav>
+        </div>
+    </header>
 
-    <!-- Hero Section -->
-    <section class="hero" id="hero">
-        <div class="container">
-            <div class="hero-content">
-                <div>
-                    <div class="pulse-chip">
-                        <span class="pulse-chip-number">01</span>
-                        <span>Purpose</span>
+    <main class="main">
+        <!-- Hero Section -->
+        <section class="hero" id="hero">
+            <div class="hero__container">
+                <div class="hero__content">
+                    <div class="hero__text">
+                        <div class="hero__badge">
+                            <span class="hero__badge-number">01</span>
+                            <span>Purpose</span>
+                        </div>
+                        
+                        <h1 class="hero__title">
+                            Atlas: Where Code<br>Meets Motion
+                        </h1>
+                        
+                        <p class="hero__subtitle">
+                            The humanoid companion that learns and adapts alongside you.
+                        </p>
+                        
+                        <div class="hero__actions">
+                            <a href="#get-access" class="btn btn--primary">
+                                Request Access
+                                <svg class="btn__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14m-7-7 7 7-7 7"/>
+                                </svg>
+                            </a>
+                        </div>
                     </div>
                     
-                    <h1>Atlas: Where Code<br>Meets Motion</h1>
+                    <div class="hero__image">
+                        <img src="/lovable-uploads/5663820f-6c97-4492-9210-9eaa1a8dc415.png" 
+                             alt="Atlas Robot" 
+                             class="hero__image-img">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Humanoid Section -->
+        <section class="humanoid" id="why-humanoid">
+            <div class="humanoid__container">
+                <div class="humanoid__header">
+                    <div class="humanoid__badge">
+                        <span class="humanoid__badge-number">02</span>
+                        <span>Humanoid</span>
+                    </div>
+                    <h2 class="humanoid__title">Why Humanoid</h2>
+                </div>
+                
+                <div class="humanoid__cards">
+                    <div class="humanoid__card humanoid__card--active" data-card="0">
+                        <div class="humanoid__card-bg" style="background-image: url('/background-section1.png')"></div>
+                        <div class="humanoid__card-tag">The vision</div>
+                        <div class="humanoid__card-content">
+                            <h3 class="humanoid__card-title">
+                                We're giving AI a way to navigate the physical world
+                            </h3>
+                        </div>
+                    </div>
                     
-                    <p>The humanoid companion that learns and adapts alongside you.</p>
+                    <div class="humanoid__card" data-card="1">
+                        <div class="humanoid__card-bg" style="background-image: url('/background-section2.png')"></div>
+                        <div class="humanoid__card-tag">The vision</div>
+                        <div class="humanoid__card-content">
+                            <h3 class="humanoid__card-title">
+                                We're bringing adaptive intelligence to where humans work
+                            </h3>
+                        </div>
+                    </div>
                     
-                    <a href="#contact" class="button-primary">
-                        Request Access
-                        <svg class="icon" style="margin-left: 0.5rem; width: 16px; height: 16px;">
-                            <path d="m9 18 6-6-6-6"></path>
-                        </svg>
-                    </a>
-                </div>
-                
-                <div class="hero-image">
-                    <img src="/lovable-uploads/5663820f-6c97-4492-9210-9eaa1a8dc415.png" alt="Atlas Robot">
+                    <div class="humanoid__card" data-card="2">
+                        <div class="humanoid__card-bg" style="background-image: url('/background-section3.png')"></div>
+                        <div class="humanoid__card-tag">The vision</div>
+                        <div class="humanoid__card-content">
+                            <h3 class="humanoid__card-title">
+                                We're creating companions, <span class="humanoid__card-highlight">not replacements</span>
+                            </h3>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Humanoid Section -->
-    <section class="humanoid-section" id="humanoid">
-        <div class="container">
-            <div class="pulse-chip" style="margin: 0 auto 1rem;">
-                <span class="pulse-chip-number">02</span>
-                <span>Humanoid</span>
-            </div>
-            
-            <h2 class="section-title">Why Humanoid</h2>
-            
-            <div class="card-stack">
-                <div class="card card-1">
-                    <div class="card-badge">The vision</div>
-                    <h3>We're giving AI a way to navigate the physical world</h3>
+        <!-- Specs Section -->
+        <section class="specs" id="specifications">
+            <div class="specs__container">
+                <div class="specs__header">
+                    <div class="specs__badge">
+                        <span class="specs__badge-number">3</span>
+                        <span>Specs</span>
+                    </div>
+                    <div class="specs__line"></div>
                 </div>
                 
-                <div class="card card-2">
-                    <div class="card-badge">The vision</div>
-                    <h3>We're bringing adaptive intelligence to where humans work</h3>
-                </div>
-                
-                <div class="card card-3">
-                    <div class="card-badge">The vision</div>
-                    <h3>We're creating companions, <span style="color: #FC4D0A;">not replacements</span></h3>
+                <div class="specs__content">
+                    <h2 class="specs__title">
+                        Atlas works with your team, not instead of it. By handling repetitive tasks, improving safety conditions, and learning from every interaction, Atlas helps humans focus on what they do best: create, solve, and innovate.
+                    </h2>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Features Section -->
-    <section class="section bg-gray-50" id="features">
-        <div class="container">
-            <div class="pulse-chip" style="margin: 0 auto 1rem;">
-                <span>Features</span>
-            </div>
-            
-            <h2 class="section-title">Advanced Intelligence,<br>Human-Like Intuition</h2>
-            <p class="section-subtitle">Built with cutting-edge technology to understand, learn, and adapt to your unique needs.</p>
-            
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg class="icon">
-                            <path d="M12 2a10 10 0 1 0 10 10 4 4 0 1 1-4-4"></path>
-                            <path d="M12 8a4 4 0 1 0 4 4"></path>
-                            <circle cx="12" cy="12" r="1"></circle>
-                        </svg>
+        <!-- Details Section -->
+        <section class="details" id="details">
+            <div class="details__container">
+                <div class="details__grid">
+                    <!-- Left Card - The Details -->
+                    <div class="details__card">
+                        <div class="details__card-header" style="background-image: url('/background-section3.png')">
+                            <h2 class="details__card-title">The details</h2>
+                        </div>
+                        
+                        <div class="details__card-content">
+                            <h3 class="details__card-subtitle">
+                                Precision engineering meets adaptive intelligence
+                            </h3>
+                            
+                            <div class="details__specs">
+                                <div class="details__spec-item">
+                                    <div class="details__spec-check">
+                                        <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+                                            <path d="M1 5L5 9L13 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </div>
+                                    <div class="details__spec-content">
+                                        <span class="details__spec-label">Height:</span> 5'8"
+                                    </div>
+                                </div>
+                                
+                                <div class="details__spec-item">
+                                    <div class="details__spec-check">
+                                        <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+                                            <path d="M1 5L5 9L13 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </div>
+                                    <div class="details__spec-content">
+                                        <span class="details__spec-label">Capacity:</span> 55lbs
+                                    </div>
+                                </div>
+                                
+                                <div class="details__spec-item">
+                                    <div class="details__spec-check">
+                                        <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+                                            <path d="M1 5L5 9L13 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </div>
+                                    <div class="details__spec-content">
+                                        <span class="details__spec-label">Weight:</span> 140lbs
+                                    </div>
+                                </div>
+                                
+                                <div class="details__spec-item">
+                                    <div class="details__spec-check">
+                                        <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+                                            <path d="M1 5L5 9L13 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </div>
+                                    <div class="details__spec-content">
+                                        <span class="details__spec-label">Uptime:</span> 6hr
+                                    </div>
+                                </div>
+                                
+                                <div class="details__spec-item">
+                                    <div class="details__spec-check">
+                                        <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+                                            <path d="M1 5L5 9L13 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </div>
+                                    <div class="details__spec-content">
+                                        <span class="details__spec-label">Movement:</span> 1.5M/S
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <h3>Adaptive Learning</h3>
-                    <p>Atlas learns from your interactions, continuously improving its responses and actions to better serve your needs.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg class="icon">
-                            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
-                            <polyline points="14 2 14 8 20 8"></polyline>
-                            <path d="M9 13v-1h6v1"></path>
-                        </svg>
-                    </div>
-                    <h3>Natural Interaction</h3>
-                    <p>Communicate using natural language and gestures. Atlas understands context and responds appropriately.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg class="icon">
-                            <rect width="18" height="11" x="3" y="11" rx="2"></rect>
-                            <circle cx="12" cy="5" r="2"></circle>
-                            <path d="M12 7v4"></path>
-                            <line x1="8" x2="8" y1="16" y2="16"></line>
-                            <line x1="16" x2="16" y1="16" y2="16"></line>
-                        </svg>
-                    </div>
-                    <h3>Precise Movement</h3>
-                    <p>Advanced motorized joints provide fluid, human-like movement with exceptional balance and coordination.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg class="icon">
-                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                            <polyline points="7.5 4.21 12 6.81 16.5 4.21"></polyline>
-                            <polyline points="7.5 19.79 7.5 14.6 3 12"></polyline>
-                            <polyline points="21 12 16.5 14.6 16.5 19.79"></polyline>
-                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                            <line x1="12" x2="12" y1="22.08" y2="12"></line>
-                        </svg>
-                    </div>
-                    <h3>Spatial Awareness</h3>
-                    <p>Advanced sensors and mapping technology allow Atlas to navigate complex environments with ease.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg class="icon">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path>
-                        </svg>
-                    </div>
-                    <h3>Enhanced Security</h3>
-                    <p>Built-in protocols protect your data and privacy, while physical safeguards ensure safe operation.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg class="icon">
-                            <path d="M16 6H3v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-2"></path>
-                            <path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"></path>
-                            <line x1="12" x2="12" y1="11" y2="15"></line>
-                            <line x1="10" x2="14" y1="13" y2="13"></line>
-                        </svg>
-                    </div>
-                    <h3>Task Assistance</h3>
-                    <p>From simple reminders to complex multi-step tasks, Atlas can assist with a wide range of activities.</p>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- Image Showcase Section -->
-    <section class="section bg-white" id="showcase">
-        <div class="container">
-            <h2 class="section-title">Experience the Future Today</h2>
-            <p class="section-subtitle">Our cutting-edge humanoid robot is designed to transform how we interact with technology in everyday environments.</p>
-            
-            <div class="showcase-image">
-                <img src="/lovable-uploads/c3d5522b-6886-4b75-8ffc-d020016bb9c2.png" alt="Advanced humanoid robot">
-                <div class="showcase-content">
-                    <h3>Next Generation Robotics</h3>
-                    <p>Built with precision engineering and sophisticated AI, our robots seamlessly integrate into various environments, from homes to hospitals, providing assistance and enriching human experiences.</p>
+                    <!-- Right Card - Contact Form -->
+                    <div class="details__card">
+                        <div class="details__card-header" style="background-image: url('/background-section1.png')">
+                            <div class="details__form-tag">Request a demo</div>
+                            <h2 class="details__card-title">See it for yourself</h2>
+                        </div>
+                        
+                        <div class="details__card-content">
+                            <form class="details__form" id="contactForm">
+                                <div class="details__form-group">
+                                    <input type="text" 
+                                           name="fullName" 
+                                           placeholder="Full name" 
+                                           class="details__form-input" 
+                                           required>
+                                </div>
+                                
+                                <div class="details__form-group">
+                                    <input type="email" 
+                                           name="email" 
+                                           placeholder="Email address" 
+                                           class="details__form-input" 
+                                           required>
+                                </div>
+                                
+                                <div class="details__form-group">
+                                    <input type="text" 
+                                           name="company" 
+                                           placeholder="Company (optional)" 
+                                           class="details__form-input">
+                                </div>
+                                
+                                <div class="details__form-group">
+                                    <button type="submit" class="btn btn--primary btn--full-width">
+                                        Request access
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Made by Humans Section -->
-    <section class="made-by-humans bg-white" id="made-by-humans">
-        <div class="container">
-            <div class="humans-card">
-                <div class="logo">
-                    <img src="/logo.svg" alt="Pulse Robot Logo">
+        <!-- Image Showcase Section -->
+        <section class="showcase" id="showcase">
+            <div class="showcase__container">
+                <div class="showcase__header">
+                    <h2 class="showcase__title">Experience the Future Today</h2>
+                    <p class="showcase__subtitle">
+                        Our cutting-edge humanoid robot is designed to transform how we interact 
+                        with technology in everyday environments.
+                    </p>
                 </div>
-                <h2 class="humans-title">Made By AI & Human</h2>
+                
+                <div class="showcase__card">
+                    <div class="showcase__image">
+                        <img src="/lovable-uploads/c3d5522b-6886-4b75-8ffc-d020016bb9c2.png" 
+                             alt="Advanced humanoid robot with orange and white design" 
+                             class="showcase__image-img">
+                    </div>
+                    <div class="showcase__content">
+                        <h3 class="showcase__content-title">Next Generation Robotics</h3>
+                        <p class="showcase__content-text">
+                            Built with precision engineering and sophisticated AI, our robots seamlessly 
+                            integrate into various environments, from homes to hospitals, providing 
+                            assistance and enriching human experiences.
+                        </p>
+                    </div>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features" id="features">
+            <div class="features__container">
+                <div class="features__header">
+                    <div class="features__badge">
+                        <span>Features</span>
+                    </div>
+                    <h2 class="features__title">
+                        Advanced Intelligence, <br>Human-Like Intuition
+                    </h2>
+                    <p class="features__subtitle">
+                        Built with cutting-edge technology to understand, learn, and adapt to your unique needs.
+                    </p>
+                </div>
+                
+                <div class="features__grid">
+                    <div class="features__card">
+                        <div class="features__card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2a10 10 0 1 0 10 10 4 4 0 1 1-4-4"></path>
+                                <path d="M12 8a4 4 0 1 0 4 4"></path>
+                                <circle cx="12" cy="12" r="1"></circle>
+                            </svg>
+                        </div>
+                        <h3 class="features__card-title">Adaptive Learning</h3>
+                        <p class="features__card-text">
+                            Atlas learns from your interactions, continuously improving its responses and actions to better serve your needs.
+                        </p>
+                    </div>
+                    
+                    <div class="features__card">
+                        <div class="features__card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <path d="M9 13v-1h6v1"></path>
+                            </svg>
+                        </div>
+                        <h3 class="features__card-title">Natural Interaction</h3>
+                        <p class="features__card-text">
+                            Communicate using natural language and gestures. Atlas understands context and responds appropriately.
+                        </p>
+                    </div>
+                    
+                    <div class="features__card">
+                        <div class="features__card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect width="18" height="11" x="3" y="11" rx="2"></rect>
+                                <circle cx="12" cy="5" r="2"></circle>
+                                <path d="M12 7v4"></path>
+                                <line x1="8" x2="8" y1="16" y2="16"></line>
+                                <line x1="16" x2="16" y1="16" y2="16"></line>
+                            </svg>
+                        </div>
+                        <h3 class="features__card-title">Precise Movement</h3>
+                        <p class="features__card-text">
+                            Advanced motorized joints provide fluid, human-like movement with exceptional balance and coordination.
+                        </p>
+                    </div>
+                    
+                    <div class="features__card">
+                        <div class="features__card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                                <polyline points="7.5 4.21 12 6.81 16.5 4.21"></polyline>
+                                <polyline points="7.5 19.79 7.5 14.6 3 12"></polyline>
+                                <polyline points="21 12 16.5 14.6 16.5 19.79"></polyline>
+                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                                <line x1="12" x2="12" y1="22.08" y2="12"></line>
+                            </svg>
+                        </div>
+                        <h3 class="features__card-title">Spatial Awareness</h3>
+                        <p class="features__card-text">
+                            Advanced sensors and mapping technology allow Atlas to navigate complex environments with ease.
+                        </p>
+                    </div>
+                    
+                    <div class="features__card">
+                        <div class="features__card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path>
+                                <path d="m14.5 9-5 5"></path>
+                                <path d="m9.5 9 5 5"></path>
+                            </svg>
+                        </div>
+                        <h3 class="features__card-title">Enhanced Security</h3>
+                        <p class="features__card-text">
+                            Built-in protocols protect your data and privacy, while physical safeguards ensure safe operation.
+                        </p>
+                    </div>
+                    
+                    <div class="features__card">
+                        <div class="features__card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M16 6H3v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-2"></path>
+                                <path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"></path>
+                                <line x1="12" x2="12" y1="11" y2="15"></line>
+                                <line x1="10" x2="14" y1="13" y2="13"></line>
+                            </svg>
+                        </div>
+                        <h3 class="features__card-title">Task Assistance</h3>
+                        <p class="features__card-text">
+                            From simple reminders to complex multi-step tasks, Atlas can assist with a wide range of activities.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section class="testimonials" id="testimonials">
+            <div class="testimonials__container">
+                <div class="testimonials__header">
+                    <div class="testimonials__badge">
+                        <span class="testimonials__badge-number">04</span>
+                        <span>Testimonials</span>
+                    </div>
+                    <h2 class="testimonials__title">What others say</h2>
+                </div>
+                
+                <div class="testimonials__grid">
+                    <div class="testimonials__card" style="background-image: url('/background-section1.png')">
+                        <div class="testimonials__card-corner"></div>
+                        <blockquote class="testimonials__quote">
+                            "Atlas transformed our production line, handling repetitive tasks while our team focuses on innovation. 30% increase in output within three months."
+                        </blockquote>
+                        <div class="testimonials__author">
+                            <h4 class="testimonials__author-name">Sarah Chen</h4>
+                            <p class="testimonials__author-role">VP of Operations, Axion Manufacturing</p>
+                        </div>
+                    </div>
+                    
+                    <div class="testimonials__card" style="background-image: url('/background-section2.png')">
+                        <div class="testimonials__card-corner"></div>
+                        <blockquote class="testimonials__quote">
+                            "Implementing Atlas in our fulfillment centers reduced workplace injuries by 40% while improving order accuracy. The learning capabilities are remarkable."
+                        </blockquote>
+                        <div class="testimonials__author">
+                            <h4 class="testimonials__author-name">Michael Rodriguez</h4>
+                            <p class="testimonials__author-role">Director of Logistics, GlobalShip</p>
+                        </div>
+                    </div>
+                    
+                    <div class="testimonials__card" style="background-image: url('/background-section3.png')">
+                        <div class="testimonials__card-corner"></div>
+                        <blockquote class="testimonials__quote">
+                            "Atlas adapted to our lab protocols faster than any system we've used. It's like having another researcher who never gets tired and maintains perfect precision."
+                        </blockquote>
+                        <div class="testimonials__author">
+                            <h4 class="testimonials__author-name">Dr. Amara Patel</h4>
+                            <p class="testimonials__author-role">Lead Scientist, BioAdvance Research</p>
+                        </div>
+                    </div>
+                    
+                    <div class="testimonials__card" style="background-image: url('/background-section1.png')">
+                        <div class="testimonials__card-corner"></div>
+                        <blockquote class="testimonials__quote">
+                            "As a mid-size business, we never thought advanced robotics would be accessible to us. Atlas changed that equation entirely with its versatility and ease of deployment."
+                        </blockquote>
+                        <div class="testimonials__author">
+                            <h4 class="testimonials__author-name">Jason Lee</h4>
+                            <p class="testimonials__author-role">CEO, Innovative Solutions Inc.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Newsletter Section -->
+        <section class="newsletter" id="newsletter">
+            <div class="newsletter__container">
+                <div class="newsletter__header">
+                    <div class="newsletter__badge">
+                        <span class="newsletter__badge-number">05</span>
+                        <span>Newsletter</span>
+                    </div>
+                </div>
+                
+                <h2 class="newsletter__title">Subscribe to the newsletter</h2>
+                <p class="newsletter__subtitle">
+                    Be first to hear about breakthroughs, partnerships, and deployment opportunities
+                </p>
+                
+                <form class="newsletter__form" id="newsletterForm">
+                    <div class="newsletter__form-group">
+                        <input type="email" 
+                               name="email" 
+                               placeholder="Email address" 
+                               class="newsletter__form-input" 
+                               required>
+                        <button type="submit" class="btn btn--primary">
+                            Submit
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Made By Humans Section -->
+        <section class="made-by-humans" id="made-by-humans">
+            <div class="made-by-humans__container">
+                <div class="made-by-humans__card" style="background-image: url('/background-section3.png')">
+                    <div class="made-by-humans__header">
+                        <img src="/logo.svg" alt="Pulse Robot Logo" class="made-by-humans__logo">
+                    </div>
+                    
+                    <div class="made-by-humans__content">
+                        <h2 class="made-by-humans__title">Made By AI & Human</h2>
+                    </div>
+                    
+                    <div class="made-by-humans__bottom"></div>
+                </div>
+            </div>
+        </section>
+    </main>
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="container">
-            <p>
+        <div class="footer__container">
+            <p class="footer__text">
                 This template takes inspiration from 
-                <a href="https://x.com/BrettFromDJ" target="_blank" rel="noopener noreferrer">DesignJoy's</a> 
+                <a href="https://x.com/BrettFromDJ" target="_blank" rel="noopener noreferrer" class="footer__link">
+                    DesignJoy's
+                </a> 
                 BUILD WARS design, built entirely with Lovable by 
-                <a href="https://x.com/rezaul_arif" target="_blank" rel="noopener noreferrer">Rezaul Arif</a>
+                <a href="https://x.com/rezaul_arif" target="_blank" rel="noopener noreferrer" class="footer__link">
+                    Rezaul Arif
+                </a>
             </p>
         </div>
     </footer>
 
-    <script>
-        // Simple smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-
-        // Navbar scroll effect
-        window.addEventListener('scroll', function() {
-            const navbar = document.querySelector('.navbar');
-            if (window.scrollY > 50) {
-                navbar.style.background = 'rgba(255, 255, 255, 0.95)';
-                navbar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
-            } else {
-                navbar.style.background = 'rgba(255, 255, 255, 0.8)';
-                navbar.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
-            }
-        });
-
-        // Simple animation on scroll
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver(function(entries) {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animate-fade-in');
-                }
-            });
-        }, observerOptions);
-
-        // Observe elements for animation
-        document.querySelectorAll('.feature-card, .section-title, .section-subtitle').forEach(el => {
-            observer.observe(el);
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
